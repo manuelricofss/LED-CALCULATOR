@@ -1,0 +1,173 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2487.2">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="es"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta charset="UTF-8" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1.0" /&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;title&gt;Calculadora de Levodopa Equivalente (LED)&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>:root{font-family:system-ui,sans-serif;line-height:1.5;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>body{margin:0;padding:2rem;background:#f8fafc;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.container{max-width:960px;margin:auto;background:#fff;padding:2rem;border-radius:1rem;box-shadow:0 10px 15px -3px rgba(0,0,0,.1);}<span class="Apple-converted-space"> </span></p>
+<p class="p1"><span class="Apple-converted-space">    </span>h1{text-align:center;margin-top:0;font-size:1.75rem;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.row{display:flex;flex-wrap:wrap;gap:.5rem;margin-bottom:.75rem;align-items:center;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.row select,.row input[type="number"]{flex:1 1 180px;min-width:130px;padding:.5rem;font-size:.95rem;border:1px solid #cbd5e0;border-radius:.5rem;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.prami-radio{display:flex;gap:.25rem;align-items:center;font-size:.9rem;border:1px solid #cbd5e0;padding:.25rem .5rem;border-radius:.5rem;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>button.icon{background:none;border:none;font-size:1.25rem;cursor:pointer;color:#ef4444;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn{display:block;width:100%;padding:.75rem;font-size:1rem;background:#3b82f6;color:#fff;border:none;border-radius:.5rem;cursor:pointer;margin-top:.5rem;transition:background .2s;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.btn:hover{background:#2563eb;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.note{font-size:.9rem;color:#475569;margin-top:.5rem;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>.result{margin-top:1.25rem;font-weight:600;font-size:1.25rem;text-align:center;}</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;main class="container"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;Calculadora de Levodopa Equivalente (LED)&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="note"&gt;Los inhibidores COMT (entacapona, tolcapona, opicapona) añaden &lt;em&gt;(factor × LED de levodopa)&lt;/em&gt;. Todas las preparaciones marcadas como “levodopa” (incluyendo las infusiones yeyunales) contribuyen a ese subtotal.&lt;/p&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div id="list"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" id="add"&gt;Añadir medicamento&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;button class="btn" id="calc"&gt;Calcular LED total&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;p class="result" id="out"&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/main&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">/*****<span class="Apple-converted-space">  </span>BASE DE DATOS DE CONVERSIÓN<span class="Apple-converted-space">  </span>*****/</p>
+<p class="p1">const DRUGS=[</p>
+<p class="p1"><span class="Apple-converted-space"> </span>// Levodopa y derivados</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa IR",f:1,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa liberación dual",f:0.85,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa CR",f:0.75,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa ER",f:0.5,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa inhalada",f:0.69,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa/carbidopa yeyunal",f:1.11,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Foslevodopa/foscarbidopa s.c.",f:0.75,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>// NUEVOS: Infusión yeyunal LD/CD/ENT (morning vs mantenimiento)</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa/carbidopa/entacapona yeyunal (dosis matutina)",f:1.11,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Levodopa/carbidopa/entacapona yeyunal (mantenimiento/rescate)",f:1.46,t:"lev"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>// COMT (se aplican sobre subtotal levodopa)</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Entacapona (COMT 0,33×)",f:0.33,t:"comt"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Tolcapona (COMT 0,50×)",f:0.5,t:"comt"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Opicapona (COMT 0,50×)",f:0.5,t:"comt"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>// Otros</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Selegilina oral",f:10,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Selegilina sublingual",f:80,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Rasagilina",f:100,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Pramipexol (sal)",f:100,t:"mul",p:true},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Pramipexol (base)",f:142.86,t:"mul",p:true},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Ropinirol",f:20,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Rotigotina",f:30.3,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Apomorfina s.c.",f:10,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Lisurida",f:100,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Bromocriptina",f:10,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Pergolida",f:100,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Cabergolina",f:66.67,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Dihidroergocriptina",f:5,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Amantadina IR",f:1,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Amantadina ER",f:1.25,t:"mul"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Safinamida (valor fijo)",v:150,t:"fix"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Zonisamida (valor fijo)",v:100,t:"fix"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Trihexifenidilo (valor fijo)",v:100,t:"fix"},</p>
+<p class="p1"><span class="Apple-converted-space"> </span>{n:"Istradefilina (factor sobre LD)",f:0.2,t:"mul"}</p>
+<p class="p1">];</p>
+<p class="p2"><br></p>
+<p class="p1">/*****<span class="Apple-converted-space">  </span>DOM<span class="Apple-converted-space">  </span>*****/</p>
+<p class="p1">let rowId=0;</p>
+<p class="p1">const list=document.getElementById('list');</p>
+<p class="p1">const out=document.getElementById('out');</p>
+<p class="p2"><br></p>
+<p class="p1">/*****<span class="Apple-converted-space">  </span>UI helpers *****/</p>
+<p class="p1">function addRow(){</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const r=document.createElement('div');</p>
+<p class="p1"><span class="Apple-converted-space"> </span>r.className='row';</p>
+<p class="p1"><span class="Apple-converted-space"> </span>r.dataset.id=rowId;</p>
+<p class="p1"><span class="Apple-converted-space"> </span>r.innerHTML=`</p>
+<p class="p1"><span class="Apple-converted-space">   </span>&lt;select class="drug"&gt;&lt;/select&gt;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>&lt;div class="prami-radio" style="display:none;"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label&gt;&lt;input type="radio" name="prami_${rowId}" value="salt" checked&gt;Sal&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;label&gt;&lt;input type="radio" name="prami_${rowId}" value="base"&gt;Base&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>&lt;input type="number" class="dose" step="0.01" placeholder="mg/día"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>&lt;button type="button" class="icon" title="Eliminar fila"&gt;✕&lt;/button&gt;`;</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const sel=r.querySelector('select.drug');</p>
+<p class="p1"><span class="Apple-converted-space"> </span>DRUGS.forEach((d,i)=&gt;sel.options.add(new Option(d.n,i)));</p>
+<p class="p1"><span class="Apple-converted-space"> </span>sel.addEventListener('change',()=&gt;updateRow(r));</p>
+<p class="p1"><span class="Apple-converted-space"> </span>r.querySelector('button.icon').onclick=()=&gt;r.remove();</p>
+<p class="p1"><span class="Apple-converted-space"> </span>list.append(r);</p>
+<p class="p1"><span class="Apple-converted-space"> </span>updateRow(r);</p>
+<p class="p1"><span class="Apple-converted-space"> </span>rowId++;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function updateRow(row){</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const drug=DRUGS[row.querySelector('select.drug').value];</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const radio=row.querySelector('.prami-radio');</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const dose=row.querySelector('input.dose');</p>
+<p class="p1"><span class="Apple-converted-space"> </span>radio.style.display=drug.p?'flex':'none';</p>
+<p class="p1"><span class="Apple-converted-space"> </span>dose.style.display=(drug.t==='fix'||drug.t==='comt')?'none':'block';</p>
+<p class="p1"><span class="Apple-converted-space"> </span>if(drug.t==='fix'||drug.t==='comt') dose.value='';</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/*****<span class="Apple-converted-space">  </span>Cálculo principal *****/</p>
+<p class="p1">function calcTotal(){</p>
+<p class="p1"><span class="Apple-converted-space"> </span>const rows=[...document.querySelectorAll('.row')];</p>
+<p class="p1"><span class="Apple-converted-space"> </span>if(rows.length===0){alert('Añade al menos un medicamento');return;}</p>
+<p class="p1"><span class="Apple-converted-space"> </span>let totalLED=0;</p>
+<p class="p1"><span class="Apple-converted-space"> </span>let ledLevodopa=0; // LED procedente exclusivamente de preparaciones de levodopa</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space"> </span>// 1) Recorrer filas y calcular LED de no-COMT</p>
+<p class="p1"><span class="Apple-converted-space"> </span>for(const row of rows){</p>
+<p class="p1"><span class="Apple-converted-space">   </span>const drug=DRUGS[row.querySelector('select.drug').value];</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(drug.t==='fix' || drug.t==='comt') continue; // se tratan más adelante</p>
+<p class="p1"><span class="Apple-converted-space">   </span>const dose=parseFloat(row.querySelector('input.dose').value);</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(!(dose&gt;0)){</p>
+<p class="p1"><span class="Apple-converted-space">     </span>alert('Introduce dosis válidas en todas las filas que lo requieran');return;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>}</p>
+<p class="p1"><span class="Apple-converted-space">   </span>let factor=drug.f;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(drug.p){</p>
+<p class="p1"><span class="Apple-converted-space">     </span>const form=row.querySelector(`input[name="prami_${row.dataset.id}"]:checked`).value;</p>
+<p class="p1"><span class="Apple-converted-space">     </span>factor=form==='salt'?100:142.86;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>}</p>
+<p class="p1"><span class="Apple-converted-space">   </span>const led=dose*factor;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>totalLED+=led;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(drug.t==='lev') ledLevodopa+=led; // acumula LED de levodopa</p>
+<p class="p1"><span class="Apple-converted-space"> </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space"> </span>// 2) COMT: aplicar sobre LED de levodopa ya calculada</p>
+<p class="p1"><span class="Apple-converted-space"> </span>for(const row of rows){</p>
+<p class="p1"><span class="Apple-converted-space">   </span>const drug=DRUGS[row.querySelector('select.drug').value];</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(drug.t!=='comt') continue;</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(ledLevodopa===0) continue; // no levodopa =&gt; sin efecto</p>
+<p class="p1"><span class="Apple-converted-space">   </span>totalLED+=ledLevodopa*drug.f;</p>
+<p class="p1"><span class="Apple-converted-space"> </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space"> </span>// 3) Fijos</p>
+<p class="p1"><span class="Apple-converted-space"> </span>for(const row of rows){</p>
+<p class="p1"><span class="Apple-converted-space">   </span>const drug=DRUGS[row.querySelector('select.drug').value];</p>
+<p class="p1"><span class="Apple-converted-space">   </span>if(drug.t==='fix') totalLED+=drug.v;</p>
+<p class="p1"><span class="Apple-converted-space"> </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space"> </span>out.textContent=`LED total = ${totalLED.toFixed(2)} mg`;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/*****<span class="Apple-converted-space">  </span>Eventos *****/</p>
+<p class="p1">document.getElementById('add').onclick=addRow;</p>
+<p class="p1">document.getElementById('calc').onclick=calcTotal;</p>
+<p class="p1">addRow();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
